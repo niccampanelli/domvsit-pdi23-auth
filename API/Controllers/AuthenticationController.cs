@@ -2,11 +2,26 @@
 
 namespace API.Controllers
 {
+    [ApiController]
+    [Route("[controller]")]
     public class AuthenticationController : Controller
     {
-        public IActionResult Index()
+        [HttpPost("[action]")]
+        public string Authenticate()
         {
-            return View("Olá mundo!");
+            return "Olá Mundo!";
+        }
+
+        [HttpPost("[action]")]
+        public string ResetPassword()
+        {
+            return "Olá Mundo!";
+        }
+
+        [HttpPost("[action]")]
+        public string SignUp()
+        {
+            return "Olá Mundo!";
         }
     }
 }
