@@ -1,12 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Swashbuckle.AspNetCore.Annotations;
 
 namespace Application.Authentication.Boundaries.ResetPassword
 {
-    internal class ResetPasswordInput
+    [SwaggerSchema(Required = new string[] { "OldPassword", "NewPassword" })]
+    public class ResetPasswordInput
     {
+        [SwaggerSchema(
+            Title = "Senha atual",
+            Description = "Senha atual do usuário",
+            Format = "string"
+            )]
+        public string OldPassword { get; set; }
+
+        [SwaggerSchema(
+            Title = "Senha nova",
+            Description = "Nova senha à ser definida",
+            Format = "string"
+            )]
+        public string NewPassword { get; set; }
     }
 }

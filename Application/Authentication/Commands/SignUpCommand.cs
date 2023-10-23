@@ -1,12 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Application.Authentication.Boundaries.SignUp;
+using Application.Authentication.Commands.Validations;
+using Domain.Base.Messages;
 
 namespace Application.Authentication.Commands
 {
-    internal class SignUpCommand
+    public class SignUpCommand : Command<SignUpOutput>
     {
+        public SignUpInput Input { get; set; }
+
+        public SignUpCommand(SignUpInput input)
+        {
+            Input = input;
+        }
+
+        public override bool IsValid()
+        {
+            ValidationResult = new SignUpCommandValidation().Validate(Input);
+            return ValidationResult.IsValid;
+        }
     }
 }

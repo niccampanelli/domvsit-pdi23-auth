@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Swashbuckle.AspNetCore.Annotations;
 
 namespace Application.Authentication.Boundaries.Authenticate
 {
-    internal class AuthenticateOutput
+    public class AuthenticateOutput : User
     {
+        [SwaggerSchema(
+            Title = "Token",
+            Description = "Bearer token para autenticar o usuário na aplicação",
+            Format = "string"
+            )]
+        public string Token { get; set; }
     }
 }
