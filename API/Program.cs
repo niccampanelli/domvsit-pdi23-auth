@@ -1,10 +1,16 @@
 using API.Setup;
+using Domain.Options;
+using Infrastructure.Setup;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var secret = builder.Configuration.GetSection("Authentication:Secret").Value;
 builder.Services.AddJwtAuthentication(secret);
+
+builder.Services.Configure<Secrets>(builder.Configuration);
+
+builder.Services.AddDbContext<DatabaseContext>();
 
 builder.Services.AddControllers();
 
