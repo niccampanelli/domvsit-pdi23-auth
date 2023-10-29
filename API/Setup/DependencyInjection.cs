@@ -6,6 +6,8 @@ using Application.Authentication.Handlers;
 using Application.UseCase.Authentication;
 using Domain.Base.Communication.Mediator;
 using Domain.Base.Messages.Common.Notification;
+using Domain.Repository;
+using Infrastructure.Repository;
 using MediatR;
 
 namespace API.Setup
@@ -22,6 +24,8 @@ namespace API.Setup
             services.AddTransient<IRequestHandler<SignUpCommand, SignUpOutput>, SignUpHandler>();
 
             services.AddScoped<IAuthenticationUseCase, AuthenticationUseCase>();
+
+            services.AddScoped<IUserRepository, UserRepository>();
         }
     }
 }

@@ -1,6 +1,7 @@
 using API.Setup;
 using Domain.Options;
 using Infrastructure.Setup;
+using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,7 +11,8 @@ builder.Services.AddJwtAuthentication(secret);
 
 builder.Services.Configure<Secrets>(builder.Configuration);
 
-builder.Services.AddDbContext<DatabaseContext>();
+var connectionString = builder.Configuration.GetSection("DatabaseConnectionString").Value;
+builder.Services.AddDbContext<DatabaseContext>(config => config.UseNpgsql(connectionString));
 
 builder.Services.AddControllers();
 
