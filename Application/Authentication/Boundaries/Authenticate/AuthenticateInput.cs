@@ -7,7 +7,7 @@ namespace Application.Authentication.Boundaries.Authenticate
     {
         [SwaggerSchema(
             Title = "Login",
-            Description = "Login cadastrado pelo usuário para cadastrar",
+            Description = "Login cadastrado pelo usuário para autenticar",
             Format = "string"
             )]
         public string Login { get; set; }

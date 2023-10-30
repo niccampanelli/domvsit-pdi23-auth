@@ -4,6 +4,8 @@ namespace Application.UseCase.Authentication
 {
     public interface IAuthenticationUseCase
     {
-        Task<UserDto> Create(UserDto input);
+        string EncryptPassword(string password);
+        Task<bool> VerifyEmailInUse(string email);
+        Task<UserDto> CreateUser(UserDto input);
     }
 }

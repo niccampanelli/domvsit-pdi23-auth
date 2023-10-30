@@ -2,6 +2,7 @@
 using Domain.Repository;
 using Infrastructure.Setup;
 using Domain.Mappers.User;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repository
 {
@@ -12,6 +13,11 @@ namespace Infrastructure.Repository
         public UserRepository(DatabaseContext databaseContext)
         {
             _databaseContext = databaseContext;
+        }
+
+        public async Task<bool> VerifyEmailInUse(string email)
+        {
+            return await _databaseContext.Users.AnyAsync(u => u.Email == email);
         }
 
         public async Task<UserDto> Create(UserDto input)

@@ -22,13 +22,6 @@ namespace Application.Authentication.Handlers
         {
             if (command.IsValid())
             {
-                await _authenticationUseCase.Create(new Domain.Dto.User.UserDto()
-                {
-                    Name = "Teste",
-                    Email = "teste@email.com",
-                    Password = "teste"
-                });
-                return default;
             }
 
             foreach (var error in command.ValidationResult.Errors)

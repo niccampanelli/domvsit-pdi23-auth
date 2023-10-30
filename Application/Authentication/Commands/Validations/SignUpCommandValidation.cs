@@ -16,7 +16,12 @@ namespace Application.Authentication.Commands.Validations
                 .EmailAddress().WithMessage("Informe um endereço de email válido");
             RuleFor(i => i.Password)
                 .NotEmpty().WithMessage("A senha deve ser informada")
-                .NotNull().WithMessage("A senha deve ser informada");
+                .NotNull().WithMessage("A senha deve ser informada")
+                .MinimumLength(8).WithMessage("A senha deve conter no mínimo 8 caracteres")
+                .Matches(@"[\p{Lu}]+").WithMessage("A senha deve conter ao menos uma letra maiúscula")
+                .Matches(@"[\p{Ll}]+").WithMessage("A senha deve conter ao menos uma letra minúscula")
+                .Matches(@"[0-9]+").WithMessage("A senha deve conter ao menos um número")
+                .Matches(@"[^\p{Lu}\p{Ll}0-9]").WithMessage("A senha deve conter ao menos um caractere especial");
         }
     }
 }
