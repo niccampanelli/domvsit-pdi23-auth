@@ -46,9 +46,7 @@ namespace Application.Authentication.Handlers
 
                 var output = new SignUpOutput()
                 {
-                    Id = createResult.Id,
-                    Name = createResult.Name,
-                    Email = createResult.Email
+                    Id = createResult.Id
                 };
 
                 return output;

@@ -22,6 +22,31 @@ namespace Application.Authentication.Handlers
         {
             if (command.IsValid())
             {
+                var input = command.Input;
+
+                input.Login = input.Login.ToLower();
+                input.Password = _authenticationUseCase.EncryptPassword(input.Password);
+
+                var authenticatedUser = await _authenticationUseCase.Authenticate(input.Login, input.Password);
+
+                if (authenticatedUser.Id <= 0L)
+                {
+                    var message = "Login ou senha inválidos";
+                    await _mediatorHandler.PublishNotification(new DomainNotification(command.MessageType, message));
+                    return default;
+                }
+
+                var token = _authenticationUseCase.GenerateToken(authenticatedUser.Id);
+
+                var result = new AuthenticateOutput()
+                {
+                    Id = authenticatedUser.Id,
+                    Email = authenticatedUser.Email,
+                    Name = authenticatedUser.Name,
+                    Token = token
+                };
+
+                return result;
             }
 
             foreach (var error in command.ValidationResult.Errors)
