@@ -31,6 +31,21 @@ namespace Application.UseCase.Authentication
             return await _userRepository.VerifyEmailInUse(email);
         }
 
+        public async Task<bool> ValidateAuthenticationToken(string token)
+        {
+            var secret = _secrets.Value.Authentication.Secret;
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var tokenValidation = await tokenHandler.ValidateTokenAsync(token, new TokenValidationParameters()
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = key,
+            });
+
+            return tokenValidation.IsValid;
+        }
+
         public async Task<UserDto> CreateUser(UserDto input)
         {
             return await _userRepository.Create(input);

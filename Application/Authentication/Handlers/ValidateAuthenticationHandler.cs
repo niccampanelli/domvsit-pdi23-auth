@@ -1,4 +1,4 @@
-﻿using Application.Authentication.Boundaries.ResetPassword;
+﻿using Application.Authentication.Boundaries.ValidateAuthentication;
 using Application.Authentication.Commands;
 using Application.UseCase.Authentication;
 using Domain.Base.Communication.Mediator;
@@ -7,27 +7,22 @@ using MediatR;
 
 namespace Application.Authentication.Handlers
 {
-    public class ResetPasswordHandler : IRequestHandler<ResetPasswordCommand, ResetPasswordOutput>
+    public class ValidateAuthenticationHandler : IRequestHandler<ValidateAuthenticationCommand, ValidateAuthenticationOutput>
     {
         private readonly IMediatorHandler _mediatorHandler;
         private readonly IAuthenticationUseCase _authenticationUseCase;
 
-        public ResetPasswordHandler(IMediatorHandler mediatorHandler, IAuthenticationUseCase authenticationUseCase)
+        public ValidateAuthenticationHandler(IMediatorHandler mediatorHandler, IAuthenticationUseCase authenticationUseCase)
         {
             _mediatorHandler = mediatorHandler;
             _authenticationUseCase = authenticationUseCase;
         }
 
-        public async Task<ResetPasswordOutput> Handle(ResetPasswordCommand command, CancellationToken cancellationToken)
+        public async Task<ValidateAuthenticationOutput> Handle(ValidateAuthenticationCommand command, CancellationToken cancellationToken)
         {
             if (command.IsValid())
             {
-                var input = command.Input;
 
-                input.OldPassword = _authenticationUseCase.EncryptPassword(input.OldPassword);
-                input.NewPassword = _authenticationUseCase.EncryptPassword(input.NewPassword);
-
-                
             }
 
             foreach (var error in command.ValidationResult.Errors)

@@ -18,7 +18,7 @@ namespace API.Setup
                     options.SaveToken = true;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        ValidateIssuerSigningKey = false,
+                        ValidateIssuerSigningKey = true,
                         IssuerSigningKey = new SymmetricSecurityKey(skey.Key),
                         ValidateIssuer = false,
                         ValidateAudience = false,

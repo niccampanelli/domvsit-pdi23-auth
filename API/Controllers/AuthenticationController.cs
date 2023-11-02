@@ -1,6 +1,7 @@
 ﻿using Application.Authentication.Boundaries.Authenticate;
 using Application.Authentication.Boundaries.ResetPassword;
 using Application.Authentication.Boundaries.SignUp;
+using Application.Authentication.Boundaries.ValidateAuthentication;
 using Application.Authentication.Commands;
 using Domain.Base.Communication.Mediator;
 using Domain.Base.Messages.Common.Notification;
@@ -73,6 +74,26 @@ namespace API.Controllers
         {
             var command = new SignUpCommand(input);
             var result = await _mediatorHandler.SendCommand<SignUpCommand, SignUpOutput>(command);
+
+            if (IsValidOperation())
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(GetMessages());
+            }
+        }
+
+        [HttpPost("[action]")]
+        [SwaggerOperation(Summary = "Validar autenticação", Description = "Valida os tokens informados na requisição e devolve novos dados caso necessário.")]
+        [SwaggerResponse(200, Description = "Sucesso", Type = typeof(ValidateAuthenticationOutput))]
+        [SwaggerResponse(400, Description = "Erros 400", Type = typeof(List<string>))]
+        [SwaggerResponse(500, Description = "Erros 500", Type = typeof(List<string>))]
+        public async Task<IActionResult> ValidateAuthentication([FromHeader] ValidateAuthenticationInput input)
+        {
+            var command = new ValidateAuthenticationCommand(input);
+            var result = await _mediatorHandler.SendCommand<ValidateAuthenticationCommand, ValidateAuthenticationOutput>(command);
 
             if (IsValidOperation())
             {

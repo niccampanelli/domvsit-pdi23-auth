@@ -1,6 +1,7 @@
 ﻿using Application.Authentication.Boundaries.Authenticate;
 using Application.Authentication.Boundaries.ResetPassword;
 using Application.Authentication.Boundaries.SignUp;
+using Application.Authentication.Boundaries.ValidateAuthentication;
 using Application.Authentication.Commands;
 using Application.Authentication.Handlers;
 using Application.UseCase.Authentication;
@@ -22,6 +23,7 @@ namespace API.Setup
             services.AddTransient<IRequestHandler<AuthenticateCommand, AuthenticateOutput>, AuthenticateHandler>();
             services.AddTransient<IRequestHandler<ResetPasswordCommand, ResetPasswordOutput>, ResetPasswordHandler>();
             services.AddTransient<IRequestHandler<SignUpCommand, SignUpOutput>, SignUpHandler>();
+            services.AddTransient<IRequestHandler<ValidateAuthenticationCommand, ValidateAuthenticationOutput>, ValidateAuthenticationHandler>();
 
             services.AddScoped<IAuthenticationUseCase, AuthenticationUseCase>();
 
