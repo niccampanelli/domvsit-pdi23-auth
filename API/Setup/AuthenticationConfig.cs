@@ -22,8 +22,19 @@ namespace API.Setup
                         IssuerSigningKey = new SymmetricSecurityKey(skey.Key),
                         ValidateIssuer = false,
                         ValidateAudience = false,
-                        ValidateLifetime = false,
                         ClockSkew = TimeSpan.Zero
+                    };
+                    options.Events = new JwtBearerEvents()
+                    {
+                        OnAuthenticationFailed = context =>
+                        {
+                            if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                            {
+                                context.Response.Headers.Add("Token-Expired", "true");
+                            }
+
+                            return Task.CompletedTask;
+                        }
                     };
                 });
         }

@@ -3,21 +3,19 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entities.User
 {
-    [Table("users")]
-    public class UserEntity
+    [Table("refresh_token")]
+    public class RefreshTokenEntity
     {
         [Key]
         public long Id { get; set; }
 
         [Required]
-        public string? Name { get; set; }
+        public long UserId { get; set; }
 
         [Required]
-        public string? Email { get; set; }
+        public UserEntity User { get; set; }
 
         [Required]
-        public string? Password { get; set; }
-
-        public RefreshTokenEntity RefreshToken { get; set; }
+        public string Value { get; set; }
     }
 }

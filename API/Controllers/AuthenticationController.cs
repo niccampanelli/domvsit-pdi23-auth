@@ -1,7 +1,7 @@
 ﻿using Application.Authentication.Boundaries.Authenticate;
 using Application.Authentication.Boundaries.ResetPassword;
 using Application.Authentication.Boundaries.SignUp;
-using Application.Authentication.Boundaries.ValidateAuthentication;
+using Application.Authentication.Boundaries.RevalidateToken;
 using Application.Authentication.Commands;
 using Domain.Base.Communication.Mediator;
 using Domain.Base.Messages.Common.Notification;
@@ -14,7 +14,7 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [AllowAnonymous]
+    [Authorize]
     [SwaggerTag("Rotas de controle de acesso da aplicação")]
     public class AuthenticationController : BaseController
     {
@@ -26,6 +26,7 @@ namespace API.Controllers
         }
 
         [HttpPost("[action]")]
+        [AllowAnonymous]
         [SwaggerOperation(Summary = "Autenticar usuário", Description = "Autentica o usuário e devolve o token para acessar a aplicação.")]
         [SwaggerResponse(200, Description = "Sucesso", Type = typeof(AuthenticateOutput))]
         [SwaggerResponse(400, Description = "Erros 400", Type = typeof(List<string>))]
@@ -46,6 +47,7 @@ namespace API.Controllers
         }
 
         [HttpPost("[action]")]
+        [AllowAnonymous]
         [SwaggerOperation(Summary = "Redefinir senha", Description = "Define uma nova senha para o usuário se a senha atual informada estiver correta.")]
         [SwaggerResponse(200, Description = "Sucesso", Type = typeof(ResetPasswordOutput))]
         [SwaggerResponse(400, Description = "Erros 400", Type = typeof(List<string>))]
@@ -66,6 +68,7 @@ namespace API.Controllers
         }
 
         [HttpPost("[action]")]
+        [AllowAnonymous]
         [SwaggerOperation(Summary = "Cadastrar usuário", Description = "Cadastra um novo usuário na aplicação.")]
         [SwaggerResponse(200, Description = "Sucesso", Type = typeof(SignUpOutput))]
         [SwaggerResponse(400, Description = "Erros 400", Type = typeof(List<string>))]
@@ -86,14 +89,23 @@ namespace API.Controllers
         }
 
         [HttpPost("[action]")]
+        [AllowAnonymous]
         [SwaggerOperation(Summary = "Validar autenticação", Description = "Valida os tokens informados na requisição e devolve novos dados caso necessário.")]
-        [SwaggerResponse(200, Description = "Sucesso", Type = typeof(ValidateAuthenticationOutput))]
+        [SwaggerResponse(200, Description = "Sucesso", Type = typeof(RevalidateTokenOutput))]
         [SwaggerResponse(400, Description = "Erros 400", Type = typeof(List<string>))]
         [SwaggerResponse(500, Description = "Erros 500", Type = typeof(List<string>))]
-        public async Task<IActionResult> ValidateAuthentication([FromHeader] ValidateAuthenticationInput input)
+        public async Task<IActionResult> RevalidateToken(
+            [FromHeader(Name = "Authorization")] string authorization,
+            [FromHeader(Name = "RefreshToken")] string refreshToken)
         {
-            var command = new ValidateAuthenticationCommand(input);
-            var result = await _mediatorHandler.SendCommand<ValidateAuthenticationCommand, ValidateAuthenticationOutput>(command);
+            var input = new RevalidateTokenInput()
+            {
+                Authorization = authorization,
+                RefreshToken = refreshToken
+            };
+
+            var command = new RevalidateTokenCommand(input);
+            var result = await _mediatorHandler.SendCommand<RevalidateTokenCommand, RevalidateTokenOutput>(command);
 
             if (IsValidOperation())
             {

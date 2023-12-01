@@ -2,6 +2,7 @@
 {
     public class AuthenticationSecrets
     {
-        public string Secret { get; set; } = string.Empty;
+        public string TokenSecret { get; set; } = string.Empty;
+        public string RefreshTokenSecret { get; set; } = string.Empty;
     }
 }

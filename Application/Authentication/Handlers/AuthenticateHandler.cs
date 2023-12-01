@@ -3,6 +3,7 @@ using Application.Authentication.Commands;
 using Application.UseCase.Authentication;
 using Domain.Base.Communication.Mediator;
 using Domain.Base.Messages.Common.Notification;
+using Domain.Dto.User;
 using MediatR;
 
 namespace Application.Authentication.Handlers
@@ -37,13 +38,23 @@ namespace Application.Authentication.Handlers
                 }
 
                 var token = _authenticationUseCase.GenerateToken(authenticatedUser.Id);
+                var refreshToken = _authenticationUseCase.GenerateRefreshToken();
+
+                var registerRefreshTokenInput = new RefreshTokenDto()
+                {
+                    UserId = authenticatedUser.Id,
+                    Value = refreshToken
+                };
+
+                await _authenticationUseCase.RegisterRefreshTokenSession(registerRefreshTokenInput);
 
                 var result = new AuthenticateOutput()
                 {
                     Id = authenticatedUser.Id,
                     Email = authenticatedUser.Email,
                     Name = authenticatedUser.Name,
-                    Token = token
+                    Token = token,
+                    RefreshToken = refreshToken
                 };
 
                 return result;

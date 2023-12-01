@@ -12,11 +12,13 @@ namespace Application.UseCase.Authentication
 {
     public class AuthenticationUseCase : IAuthenticationUseCase
     {
+        private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly IUserRepository _userRepository;
         private readonly IOptions<Secrets> _secrets;
 
-        public AuthenticationUseCase(IUserRepository userRepository, IOptions<Secrets> secrets)
+        public AuthenticationUseCase(IRefreshTokenRepository refreshTokenRepository, IUserRepository userRepository, IOptions<Secrets> secrets)
         {
+            _refreshTokenRepository = refreshTokenRepository;
             _userRepository = userRepository;
             _secrets = secrets;
         } 
@@ -31,9 +33,9 @@ namespace Application.UseCase.Authentication
             return await _userRepository.VerifyEmailInUse(email);
         }
 
-        public async Task<bool> ValidateAuthenticationToken(string token)
+        public async Task<bool> ValidateToken(string token)
         {
-            var secret = _secrets.Value.Authentication.Secret;
+            var secret = _secrets.Value.Authentication.TokenSecret;
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
 
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -41,14 +43,61 @@ namespace Application.UseCase.Authentication
             {
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = key,
+                ClockSkew = TimeSpan.Zero,
+                ValidateLifetime = false,
+                ValidateAudience = false,
+                ValidateIssuer = false
             });
 
             return tokenValidation.IsValid;
         }
 
+        public async Task<bool> ValidateRefreshToken(string refreshToken)
+        {
+            var secret = _secrets.Value.Authentication.RefreshTokenSecret;
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var tokenValidation = await tokenHandler.ValidateTokenAsync(refreshToken, new TokenValidationParameters()
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = key,
+                ClockSkew = TimeSpan.Zero,
+                ValidateLifetime = false,
+                ValidateAudience = false,
+                ValidateIssuer = false
+            });
+
+            return tokenValidation.IsValid;
+        }
+
+        public long ExtractIdFromToken(string token)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var jwtToken = tokenHandler.ReadJwtToken(token);
+            var idClaim = jwtToken.Claims.First(c => c.Type.Equals("Sid")).Value;
+            var id = long.Parse(idClaim);
+            return id;
+        }
+        
+        public async Task<bool> IsRefreshTokenRegistered(RefreshTokenDto input)
+        {
+            return await _refreshTokenRepository.IsRefreshTokenRegistered(input);
+        }
+
         public async Task<UserDto> CreateUser(UserDto input)
         {
             return await _userRepository.Create(input);
+        }
+
+        public async Task RemoveRegisteredUserRefreshTokens(long userId)
+        {
+            return await _refreshTokenRepository.RemoveRegisteredUserRefreshTokens(userId);
+        }
+
+        public async Task RegisterRefreshTokenSession(RefreshTokenDto input)
+        {
+            await _refreshTokenRepository.RegisterRefreshTokenSession(input);
         }
 
         public string EncryptPassword(string password)
@@ -68,7 +117,7 @@ namespace Application.UseCase.Authentication
 
         public string GenerateToken(long id)
         {
-            var secret = _secrets.Value.Authentication.Secret;
+            var secret = _secrets.Value.Authentication.TokenSecret;
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
 
             var tokenDescriptor = new SecurityTokenDescriptor()
@@ -78,7 +127,24 @@ namespace Application.UseCase.Authentication
                     {
                         new Claim(ClaimTypes.Sid, id.ToString())
                     }),
-                Expires = DateTime.UtcNow.AddHours(3),
+                Expires = DateTime.UtcNow.AddMinutes(1),
+                SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+
+            return tokenHandler.WriteToken(token);
+        }
+
+        public string GenerateRefreshToken()
+        {
+            var secret = _secrets.Value.Authentication.RefreshTokenSecret;
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
+
+            var tokenDescriptor = new SecurityTokenDescriptor()
+            {
+                Expires = DateTime.UtcNow.AddMinutes(1),
                 SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature)
             };
 

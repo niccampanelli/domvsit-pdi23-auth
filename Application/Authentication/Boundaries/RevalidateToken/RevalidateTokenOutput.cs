@@ -1,8 +1,8 @@
 ﻿using Swashbuckle.AspNetCore.Annotations;
 
-namespace Application.Authentication.Boundaries.ValidateAuthentication
+namespace Application.Authentication.Boundaries.RevalidateToken
 {
-    public class ValidateAuthenticationOutput
+    public class RevalidateTokenOutput
     {
         [SwaggerSchema(
             Title = "Id",

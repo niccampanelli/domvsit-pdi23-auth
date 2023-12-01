@@ -6,7 +6,7 @@ using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var secret = builder.Configuration.GetSection("Authentication:Secret").Value;
+var secret = builder.Configuration.GetSection("Authentication:TokenSecret").Value;
 builder.Services.AddJwtAuthentication(secret);
 
 builder.Services.Configure<Secrets>(builder.Configuration);

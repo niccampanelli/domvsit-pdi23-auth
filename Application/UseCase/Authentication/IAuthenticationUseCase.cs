@@ -6,9 +6,15 @@ namespace Application.UseCase.Authentication
     {
         Task<UserDto> Authenticate(string email, string encryptedPassword);
         Task<bool> VerifyEmailInUse(string email);
-        Task<bool> ValidateAuthenticationToken(string token);
+        Task<bool> ValidateToken(string token);
+        Task<bool> ValidateRefreshToken(string refreshToken);
+        Task<bool> IsRefreshTokenRegistered(RefreshTokenDto input);
         Task<UserDto> CreateUser(UserDto input);
+        Task RemoveRegisteredUserRefreshTokens(long userId);
+        Task RegisterRefreshTokenSession(RefreshTokenDto input);
         string EncryptPassword(string password);
         string GenerateToken(long id);
+        string GenerateRefreshToken();
+        long ExtractIdFromToken(string token);
     }
 }
