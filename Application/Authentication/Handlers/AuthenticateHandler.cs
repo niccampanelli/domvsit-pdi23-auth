@@ -28,7 +28,13 @@ namespace Application.Authentication.Handlers
                 input.Login = input.Login.ToLower();
                 input.Password = _authenticationUseCase.EncryptPassword(input.Password);
 
-                var authenticatedUser = await _authenticationUseCase.Authenticate(input.Login, input.Password);
+                var authenticateInput = new AuthenticateDto()
+                {
+                    Email = input.Login,
+                    EncryptedPassword = input.Password
+                };
+
+                var authenticatedUser = await _authenticationUseCase.Authenticate(authenticateInput);
 
                 if (authenticatedUser.Id <= 0L)
                 {
@@ -39,6 +45,8 @@ namespace Application.Authentication.Handlers
 
                 var token = _authenticationUseCase.GenerateToken(authenticatedUser.Id);
                 var refreshToken = _authenticationUseCase.GenerateRefreshToken();
+
+                await _authenticationUseCase.RemoveRegisteredUserRefreshTokens(authenticatedUser.Id);
 
                 var registerRefreshTokenInput = new RefreshTokenDto()
                 {

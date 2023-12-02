@@ -9,7 +9,8 @@ namespace Application.Authentication.Commands.Validations
         {
             RuleFor(i => i.Authorization)
                 .NotEmpty().WithMessage("Usuário não autenticado. O token de autenticação precisa estar presente")
-                .NotNull().WithMessage("Usuário não autenticado. O token de autenticação precisa estar presente");
+                .NotNull().WithMessage("Usuário não autenticado. O token de autenticação precisa estar presente")
+                .Matches(@"\bBearer\b").WithMessage("Usuário não autenticado. Token de autenticação inválido");
         }
     }
 }

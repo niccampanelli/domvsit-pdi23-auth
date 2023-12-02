@@ -5,6 +5,7 @@ using Domain.Base.Communication.Mediator;
 using Domain.Base.Messages.Common.Notification;
 using Domain.Dto.User;
 using MediatR;
+using System.Text.RegularExpressions;
 
 namespace Application.Authentication.Handlers
 {
@@ -24,6 +25,7 @@ namespace Application.Authentication.Handlers
             if (command.IsValid())
             {
                 var input = command.Input;
+                input.Authorization = Regex.Replace(input.Authorization, @"\bBearer\b", string.Empty).Trim();
                 
                 if (!await _authenticationUseCase.ValidateToken(input.Authorization))
                 {
@@ -53,6 +55,22 @@ namespace Application.Authentication.Handlers
                     await _mediatorHandler.PublishNotification(new DomainNotification(command.MessageType, message));
                     return default;
                 }
+
+                var newToken = _authenticationUseCase.GenerateToken(userId);
+
+                if (newToken == null)
+                {
+                    var message = "Não foi possível gerar um novo token";
+                    await _mediatorHandler.PublishNotification(new DomainNotification(command.MessageType, message));
+                    return default;
+                }
+
+                var result = new RevalidateTokenOutput()
+                {
+                    Token = newToken
+                };
+
+                return result;
             }
 
             foreach (var error in command.ValidationResult.Errors)

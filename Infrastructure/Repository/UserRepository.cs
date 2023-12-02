@@ -15,9 +15,9 @@ namespace Infrastructure.Repository
             _databaseContext = databaseContext;
         }
 
-        public async Task<UserDto> Authenticate(string email, string encryptedPassword)
+        public async Task<UserDto> Authenticate(AuthenticateDto input)
         {
-            var authenticatedUser = await _databaseContext.Users.FirstAsync(u => u.Email == email && u.Password == encryptedPassword);
+            var authenticatedUser = await _databaseContext.Users.FirstAsync(u => u.Email.Equals(input.Email) && u.Password.Equals(input.EncryptedPassword));
             if (authenticatedUser == null)
                 return default;
 

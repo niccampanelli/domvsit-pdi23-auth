@@ -4,7 +4,7 @@ namespace Application.UseCase.Authentication
 {
     public interface IAuthenticationUseCase
     {
-        Task<UserDto> Authenticate(string email, string encryptedPassword);
+        Task<UserDto> Authenticate(AuthenticateDto input);
         Task<bool> VerifyEmailInUse(string email);
         Task<bool> ValidateToken(string token);
         Task<bool> ValidateRefreshToken(string refreshToken);

@@ -23,9 +23,9 @@ namespace Application.UseCase.Authentication
             _secrets = secrets;
         } 
 
-        public async Task<UserDto> Authenticate(string email, string encryptedPassword)
+        public async Task<UserDto> Authenticate(AuthenticateDto input)
         {
-            return await _userRepository.Authenticate(email, encryptedPassword);
+            return await _userRepository.Authenticate(input);
         }
 
         public async Task<bool> VerifyEmailInUse(string email)
@@ -75,7 +75,7 @@ namespace Application.UseCase.Authentication
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var jwtToken = tokenHandler.ReadJwtToken(token);
-            var idClaim = jwtToken.Claims.First(c => c.Type.Equals("Sid")).Value;
+            var idClaim = jwtToken.Claims.First(c => c.Type.Equals(ClaimTypes.Sid)).Value;
             var id = long.Parse(idClaim);
             return id;
         }
@@ -92,7 +92,7 @@ namespace Application.UseCase.Authentication
 
         public async Task RemoveRegisteredUserRefreshTokens(long userId)
         {
-            return await _refreshTokenRepository.RemoveRegisteredUserRefreshTokens(userId);
+            await _refreshTokenRepository.RemoveRegisteredUserRefreshTokens(userId);
         }
 
         public async Task RegisterRefreshTokenSession(RefreshTokenDto input)
@@ -120,6 +120,8 @@ namespace Application.UseCase.Authentication
             var secret = _secrets.Value.Authentication.TokenSecret;
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
 
+            var expirationInMinutes = _secrets.Value.Authentication.TokenExpirationInMinutes;
+
             var tokenDescriptor = new SecurityTokenDescriptor()
             {
                 Subject = new ClaimsIdentity(
@@ -127,7 +129,7 @@ namespace Application.UseCase.Authentication
                     {
                         new Claim(ClaimTypes.Sid, id.ToString())
                     }),
-                Expires = DateTime.UtcNow.AddMinutes(1),
+                Expires = DateTime.UtcNow.AddMinutes(expirationInMinutes),
                 SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature)
             };
 
@@ -142,9 +144,11 @@ namespace Application.UseCase.Authentication
             var secret = _secrets.Value.Authentication.RefreshTokenSecret;
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
 
+            var expirationInMinutes = _secrets.Value.Authentication.RefreshTokenExpirationInMinutes;
+
             var tokenDescriptor = new SecurityTokenDescriptor()
             {
-                Expires = DateTime.UtcNow.AddMinutes(1),
+                Expires = DateTime.UtcNow.AddMinutes(expirationInMinutes),
                 SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature)
             };
 

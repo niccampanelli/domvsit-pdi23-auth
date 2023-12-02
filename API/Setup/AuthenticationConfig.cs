@@ -8,7 +8,7 @@ namespace API.Setup
     {
         public static void AddJwtAuthentication(this IServiceCollection services, string secret)
         {
-            var skey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secret));
+            var skey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
 
             services
                 .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -22,7 +22,7 @@ namespace API.Setup
                         IssuerSigningKey = new SymmetricSecurityKey(skey.Key),
                         ValidateIssuer = false,
                         ValidateAudience = false,
-                        ClockSkew = TimeSpan.Zero
+                        ClockSkew = TimeSpan.Zero,
                     };
                     options.Events = new JwtBearerEvents()
                     {
