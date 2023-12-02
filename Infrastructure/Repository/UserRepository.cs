@@ -17,7 +17,7 @@ namespace Infrastructure.Repository
 
         public async Task<UserDto> Authenticate(AuthenticateDto input)
         {
-            var authenticatedUser = await _databaseContext.Users.FirstAsync(u => u.Email.Equals(input.Email) && u.Password.Equals(input.EncryptedPassword));
+            var authenticatedUser = await _databaseContext.Users.FirstOrDefaultAsync(u => u.Email.Equals(input.Email) && u.Password.Equals(input.EncryptedPassword));
             if (authenticatedUser == null)
                 return default;
 
@@ -35,6 +35,14 @@ namespace Infrastructure.Repository
             var result = _databaseContext.Users.Add(entity);
             await _databaseContext.SaveChangesAsync();
             return result.Entity.MapToDto();
+        }
+
+        public async Task SetNewPassword(PasswordDto input)
+        {
+            var entity = await _databaseContext.Users.FirstOrDefaultAsync(u => u.Id.Equals(input.UserId));
+            entity.Password = input.EncryptedPassword;
+            _databaseContext.Update(entity);
+            await _databaseContext.SaveChangesAsync();
         }
     }
 }

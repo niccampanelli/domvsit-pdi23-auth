@@ -90,6 +90,11 @@ namespace Application.UseCase.Authentication
             return await _userRepository.Create(input);
         }
 
+        public async Task SetNewPassword(PasswordDto input)
+        {
+            await _userRepository.SetNewPassword(input);
+        }
+
         public async Task RemoveRegisteredUserRefreshTokens(long userId)
         {
             await _refreshTokenRepository.RemoveRegisteredUserRefreshTokens(userId);

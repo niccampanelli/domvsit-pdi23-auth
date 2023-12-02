@@ -25,7 +25,7 @@ namespace Application.Authentication.Handlers
             {
                 var input = command.Input;
 
-                input.Login = input.Login.ToLower();
+                input.Login = input.Login.ToLower().Trim();
                 input.Password = _authenticationUseCase.EncryptPassword(input.Password);
 
                 var authenticateInput = new AuthenticateDto()
@@ -36,7 +36,7 @@ namespace Application.Authentication.Handlers
 
                 var authenticatedUser = await _authenticationUseCase.Authenticate(authenticateInput);
 
-                if (authenticatedUser.Id <= 0L)
+                if (authenticatedUser == null || authenticatedUser.Id <= 0L)
                 {
                     var message = "Login ou senha inválidos";
                     await _mediatorHandler.PublishNotification(new DomainNotification(command.MessageType, message));

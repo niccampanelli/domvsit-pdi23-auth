@@ -90,7 +90,7 @@ namespace API.Controllers
 
         [HttpPost("[action]")]
         [AllowAnonymous]
-        [SwaggerOperation(Summary = "Validar autenticação", Description = "Valida os tokens informados na requisição e devolve novos dados caso necessário.")]
+        [SwaggerOperation(Summary = "Revalidar token", Description = "Utiliza o refresh token para gerar um novo token de acesso válido")]
         [SwaggerResponse(200, Description = "Sucesso", Type = typeof(RevalidateTokenOutput))]
         [SwaggerResponse(400, Description = "Erros 400", Type = typeof(List<string>))]
         [SwaggerResponse(500, Description = "Erros 500", Type = typeof(List<string>))]

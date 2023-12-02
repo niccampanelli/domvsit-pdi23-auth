@@ -6,6 +6,13 @@ namespace Application.Authentication.Boundaries.ResetPassword
     public class ResetPasswordInput
     {
         [SwaggerSchema(
+            Title = "Login",
+            Description = "Login cadastrado pelo usuário para autenticar",
+            Format = "string"
+            )]
+        public string Login { get; set; }
+
+        [SwaggerSchema(
             Title = "Senha atual",
             Description = "Senha atual do usuário",
             Format = "string"

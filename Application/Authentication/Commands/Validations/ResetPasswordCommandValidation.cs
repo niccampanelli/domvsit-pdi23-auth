@@ -7,6 +7,9 @@ namespace Application.Authentication.Commands.Validations
     {
         public ResetPasswordCommandValidation()
         {
+            RuleFor(i => i.Login)
+                .NotEmpty().WithMessage("A string de login deve ser informada")
+                .NotNull().WithMessage("A string de login deve ser informada");
             RuleFor(i => i.OldPassword)
                 .NotEmpty().WithMessage("A senha atual deve ser informada")
                 .NotNull().WithMessage("A senha atual deve ser informada");
@@ -17,7 +20,8 @@ namespace Application.Authentication.Commands.Validations
                 .Matches(@"[\p{Lu}]+").WithMessage("A nova senha à ser definida deve conter ao menos uma letra maiúscula")
                 .Matches(@"[\p{Ll}]+").WithMessage("A nova senha à ser definida deve conter ao menos uma letra minúscula")
                 .Matches(@"[0-9]+").WithMessage("A nova senha à ser definida deve conter ao menos um número")
-                .Matches(@"[^\p{Lu}\p{Ll}0-9]").WithMessage("A nova senha à ser definida deve conter ao menos um caractere especial");
+                .Matches(@"[^\p{Lu}\p{Ll}0-9]").WithMessage("A nova senha à ser definida deve conter ao menos um caractere especial")
+                .NotEqual(i => i.OldPassword).WithMessage("A nova senha não deve ser igual à senha atual");
         }
     }
 }
