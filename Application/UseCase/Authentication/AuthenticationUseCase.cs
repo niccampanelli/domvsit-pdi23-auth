@@ -87,6 +87,7 @@ namespace Application.UseCase.Authentication
 
         public async Task<UserDto> CreateUser(UserDto input)
         {
+            input.CreatedAt = DateTime.Now;
             return await _userRepository.Create(input);
         }
 

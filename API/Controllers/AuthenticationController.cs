@@ -70,7 +70,7 @@ namespace API.Controllers
         [HttpPost("[action]")]
         [AllowAnonymous]
         [SwaggerOperation(Summary = "Cadastrar usuário", Description = "Cadastra um novo usuário na aplicação.")]
-        [SwaggerResponse(200, Description = "Sucesso", Type = typeof(SignUpOutput))]
+        [SwaggerResponse(201, Description = "Sucesso", Type = typeof(SignUpOutput))]
         [SwaggerResponse(400, Description = "Erros 400", Type = typeof(List<string>))]
         [SwaggerResponse(500, Description = "Erros 500", Type = typeof(List<string>))]
         public async Task<IActionResult> SignUp([FromBody] SignUpInput input)

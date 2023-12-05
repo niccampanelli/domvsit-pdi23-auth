@@ -10,14 +10,17 @@ namespace Domain.Entities.User
         public long Id { get; set; }
 
         [Required]
-        public string? Name { get; set; }
+        public string Name { get; set; }
 
         [Required]
-        public string? Email { get; set; }
+        public string Email { get; set; }
 
         [Required]
-        public string? Password { get; set; }
+        public string Password { get; set; }
 
-        public RefreshTokenEntity RefreshToken { get; set; }
+        public RefreshTokenEntity? RefreshToken { get; set; }
+
+        [Required]
+        public DateTime CreatedAt { get; set; }
     }
 }

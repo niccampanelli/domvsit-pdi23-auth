@@ -12,8 +12,7 @@ namespace Domain.Entities.User
         [Required]
         public long UserId { get; set; }
 
-        [Required]
-        public UserEntity User { get; set; }
+        public UserEntity? User { get; set; }
 
         [Required]
         public string Value { get; set; }
