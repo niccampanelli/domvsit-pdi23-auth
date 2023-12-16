@@ -9,6 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 var secret = builder.Configuration.GetSection("Authentication:TokenSecret").Value;
 builder.Services.AddJwtAuthentication(secret);
 
+builder.Services.AddCustomCors();
+
 builder.Services.Configure<Secrets>(builder.Configuration);
 
 var connectionString = builder.Configuration.GetSection("DatabaseConnectionString").Value;
@@ -32,7 +34,7 @@ app.UseReDoc(config =>
     config.SpecUrl = "/swagger/v1/swagger.json";
 });
 
-app.UseCors();
+app.UseCustomCors();
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
