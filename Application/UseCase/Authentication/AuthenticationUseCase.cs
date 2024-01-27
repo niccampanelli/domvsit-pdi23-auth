@@ -71,6 +71,11 @@ namespace Application.UseCase.Authentication
             return tokenValidation.IsValid;
         }
 
+        public async Task<UserDto> GetUserById(long id)
+        {
+            return await _userRepository.GetById(id);
+        }
+
         public long ExtractIdFromToken(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();

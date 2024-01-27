@@ -10,6 +10,7 @@ namespace Application.UseCase.Authentication
         Task<bool> ValidateRefreshToken(string refreshToken);
         Task<bool> IsRefreshTokenRegistered(RefreshTokenDto input);
         Task<UserDto> CreateUser(UserDto input);
+        Task<UserDto> GetUserById(long id);
         Task SetNewPassword(PasswordDto input);
         Task RemoveRegisteredUserRefreshTokens(long userId);
         Task RegisterRefreshTokenSession(RefreshTokenDto input);

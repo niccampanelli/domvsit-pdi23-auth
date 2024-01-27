@@ -9,6 +9,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using Application.Authentication.Boundaries.RestoreUserData;
 
 namespace API.Controllers
 {
@@ -106,6 +107,31 @@ namespace API.Controllers
 
             var command = new RevalidateTokenCommand(input);
             var result = await _mediatorHandler.SendCommand<RevalidateTokenCommand, RevalidateTokenOutput>(command);
+
+            if (IsValidOperation())
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(GetMessages());
+            }
+        }
+
+        [HttpGet("[action]")]
+        [SwaggerOperation(Summary = "Restaurar dados do usuário", Description = "Obtém os dados do usuário logado com base no token")]
+        [SwaggerResponse(200, Description = "Sucesso", Type = typeof(RestoreUserDataOutput))]
+        [SwaggerResponse(400, Description = "Erros 400", Type = typeof(List<string>))]
+        [SwaggerResponse(500, Description = "Erros 500", Type = typeof(List<string>))]
+        public async Task<IActionResult> RestoreUserData([FromHeader(Name = "Authorization")] string authorization)
+        {
+            var input = new RestoreUserDataInput()
+            {
+                Authorization = authorization
+            };
+
+            var command = new RestoreUserDataCommand(input);
+            var result = await _mediatorHandler.SendCommand<RestoreUserDataCommand, RestoreUserDataOutput>(command);
 
             if (IsValidOperation())
             {

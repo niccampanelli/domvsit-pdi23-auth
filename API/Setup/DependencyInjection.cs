@@ -10,6 +10,7 @@ using Domain.Base.Messages.Common.Notification;
 using Domain.Repository;
 using Infrastructure.Repository;
 using MediatR;
+using Application.Authentication.Boundaries.RestoreUserData;
 
 namespace API.Setup
 {
@@ -22,8 +23,9 @@ namespace API.Setup
 
             services.AddTransient<IRequestHandler<AuthenticateCommand, AuthenticateOutput>, AuthenticateHandler>();
             services.AddTransient<IRequestHandler<ResetPasswordCommand, ResetPasswordOutput>, ResetPasswordHandler>();
-            services.AddTransient<IRequestHandler<SignUpCommand, SignUpOutput>, SignUpHandler>();
+            services.AddTransient<IRequestHandler<RestoreUserDataCommand, RestoreUserDataOutput>, RestoreUserDataHandler>();
             services.AddTransient<IRequestHandler<RevalidateTokenCommand, RevalidateTokenOutput>, RevalidateTokenHandler>();
+            services.AddTransient<IRequestHandler<SignUpCommand, SignUpOutput>, SignUpHandler>();
 
             services.AddScoped<IAuthenticationUseCase, AuthenticationUseCase>();
 

@@ -37,6 +37,15 @@ namespace Infrastructure.Repository
             return result.Entity.MapToDto();
         }
 
+        public async Task<UserDto> GetById(long id)
+        {
+            var entity = await _databaseContext.Users.FirstOrDefaultAsync(u => u.Id.Equals(id));
+            if (entity == null)
+                return default;
+
+            return entity.MapToDto();
+        }
+
         public async Task SetNewPassword(PasswordDto input)
         {
             var entity = await _databaseContext.Users.FirstOrDefaultAsync(u => u.Id.Equals(input.UserId));
