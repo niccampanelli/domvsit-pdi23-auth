@@ -84,7 +84,7 @@ namespace Application.UseCase.Authentication
             var idClaim = jwtToken.Claims.First(c => c.Type.Equals(ClaimTypes.Sid)).Value;
             var id = long.Parse(idClaim);
 
-            var userTypeClaim = jwtToken.Claims.First(c => c.Type.Equals(ClaimTypes.GroupSid)).Value;
+            var userTypeClaim = jwtToken.Claims.First(c => c.Type.Equals("UserType")).Value;
 
             var output = new ExtractIdFromTokenOutputDto();
 
@@ -159,7 +159,7 @@ namespace Application.UseCase.Authentication
                     new Claim[]
                     {
                         new Claim(ClaimTypes.Sid, id.ToString()),
-                        new Claim(ClaimTypes.GroupSid, userType.ToString())
+                        new Claim("UserType", userType.ToString())
                     }),
                 Expires = DateTime.UtcNow.AddMinutes(expirationInMinutes),
                 SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature)
