@@ -26,9 +26,16 @@ namespace Application.Authentication.Handlers
                 var input = command.Input;
                 input.Authorization = Regex.Replace(input.Authorization, @"\bBearer\b", string.Empty).Trim();
 
-                var userId = _authenticationUseCase.ExtractIdFromToken(input.Authorization);
+                var extractResult = _authenticationUseCase.ExtractIdFromToken(input.Authorization);
 
-                var user = await _authenticationUseCase.GetUserById(userId);
+                if (extractResult.UserId.HasValue == false)
+                {
+                    var message = "Usuário não encontrado";
+                    await _mediatorHandler.PublishNotification(new DomainNotification(command.MessageType, message));
+                    return default;
+                }
+
+                var user = await _authenticationUseCase.GetUserById(extractResult.UserId.Value);
 
                 var result = new RestoreUserDataOutput()
                 {

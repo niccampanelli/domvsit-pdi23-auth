@@ -18,8 +18,6 @@ namespace Domain.Entities.User
         [Required]
         public string Password { get; set; }
 
-        public RefreshTokenEntity? RefreshToken { get; set; }
-
         [Required]
         public DateTime CreatedAt { get; set; }
     }

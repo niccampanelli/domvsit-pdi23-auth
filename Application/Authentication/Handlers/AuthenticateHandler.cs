@@ -43,7 +43,7 @@ namespace Application.Authentication.Handlers
                     return default;
                 }
 
-                var token = _authenticationUseCase.GenerateToken(authenticatedUser.Id);
+                var token = _authenticationUseCase.GenerateToken(authenticatedUser.Id, TokenUserTypeEnum.User);
                 var refreshToken = _authenticationUseCase.GenerateRefreshToken();
 
                 await _authenticationUseCase.RemoveRegisteredUserRefreshTokens(authenticatedUser.Id);

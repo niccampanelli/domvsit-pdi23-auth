@@ -1,10 +1,8 @@
 ﻿namespace Domain.Dto.User
 {
-    public class RefreshTokenDto
+    public class ExtractIdFromTokenOutputDto
     {
-        public long Id { get; set; }
         public long? UserId { get; set; }
         public long? AttendantId { get; set; }
-        public string Value { get; set; }
     }
 }

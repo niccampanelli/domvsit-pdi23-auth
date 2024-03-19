@@ -7,5 +7,6 @@ namespace Domain.Repository
         Task RegisterRefreshTokenSession(RefreshTokenDto input);
         Task<bool> IsRefreshTokenRegistered(RefreshTokenDto input);
         Task RemoveRegisteredUserRefreshTokens(long userId);
+        Task RemoveRegisteredAttendantRefreshTokens(long attendantId);
     }
 }

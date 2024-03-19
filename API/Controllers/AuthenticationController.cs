@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using Application.Authentication.Boundaries.RestoreUserData;
+using Application.Authentication.Boundaries.GenerateTokenForAttendant;
 
 namespace API.Controllers
 {
@@ -36,6 +37,27 @@ namespace API.Controllers
         {
             var command = new AuthenticateCommand(input);
             var result = await _mediatorHandler.SendCommand<AuthenticateCommand, AuthenticateOutput>(command);
+
+            if (IsValidOperation())
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(GetMessages());
+            }
+        }
+
+        [HttpPost("[action]")]
+        [AllowAnonymous]
+        [SwaggerOperation(Summary = "Gerar token", Description = "Gera os tokens de acesso à um participante.")]
+        [SwaggerResponse(200, Description = "Sucesso", Type = typeof(GenerateTokenForAttendantOutput))]
+        [SwaggerResponse(400, Description = "Erros 400", Type = typeof(List<string>))]
+        [SwaggerResponse(500, Description = "Erros 500", Type = typeof(List<string>))]
+        public async Task<IActionResult> GenerateTokenForAttendant([FromBody] GenerateTokenForAttendantInput input)
+        {
+            var command = new GenerateTokenForAttendantCommand(input);
+            var result = await _mediatorHandler.SendCommand<GenerateTokenForAttendantCommand, GenerateTokenForAttendantOutput>(command);
 
             if (IsValidOperation())
             {

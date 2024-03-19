@@ -9,10 +9,9 @@ namespace Domain.Entities.User
         [Key]
         public long Id { get; set; }
 
-        [Required]
-        public long UserId { get; set; }
+        public long? UserId { get; set; }
 
-        public UserEntity? User { get; set; }
+        public long? AttendantId { get; set; }
 
         [Required]
         public string Value { get; set; }

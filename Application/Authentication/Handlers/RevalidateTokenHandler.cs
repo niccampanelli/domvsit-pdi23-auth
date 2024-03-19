@@ -41,11 +41,12 @@ namespace Application.Authentication.Handlers
                     return default;
                 }
 
-                var userId = _authenticationUseCase.ExtractIdFromToken(input.Authorization);
+                var extractResult = _authenticationUseCase.ExtractIdFromToken(input.Authorization);
 
                 var isRefreshTokenRegisteredInput = new RefreshTokenDto()
                 {
-                    UserId = userId,
+                    UserId = extractResult.UserId,
+                    AttendantId = extractResult.AttendantId,
                     Value = input.RefreshToken
                 };
 
@@ -56,7 +57,22 @@ namespace Application.Authentication.Handlers
                     return default;
                 }
 
-                var newToken = _authenticationUseCase.GenerateToken(userId);
+                string newToken;
+
+                if (extractResult.UserId.HasValue)
+                {
+                    newToken = _authenticationUseCase.GenerateToken(extractResult.UserId.Value, TokenUserTypeEnum.User);
+                }
+                else if (extractResult.AttendantId.HasValue)
+                {
+                    newToken = _authenticationUseCase.GenerateToken(extractResult.AttendantId.Value, TokenUserTypeEnum.Attendant);
+                }
+                else
+                {
+                    var message = "Nenhum id presente no token fornecido";
+                    await _mediatorHandler.PublishNotification(new DomainNotification(command.MessageType, message));
+                    return default;
+                }
 
                 if (newToken == null)
                 {

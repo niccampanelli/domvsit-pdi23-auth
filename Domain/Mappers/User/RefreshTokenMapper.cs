@@ -10,6 +10,7 @@ namespace Domain.Mappers.User
             return new RefreshTokenEntity()
             {
                 UserId = input.UserId,
+                AttendantId = input.AttendantId,
                 Value = input.Value
             };
         }

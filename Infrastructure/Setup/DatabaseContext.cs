@@ -22,11 +22,6 @@ namespace Infrastructure.Setup
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            modelBuilder.Entity<RefreshTokenEntity>()
-                .HasOne(r => r.User)
-                .WithOne(u => u.RefreshToken)
-                .HasForeignKey<RefreshTokenEntity>(r => r.UserId);
         }
     }
 }

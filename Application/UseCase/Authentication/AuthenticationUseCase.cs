@@ -76,13 +76,28 @@ namespace Application.UseCase.Authentication
             return await _userRepository.GetById(id);
         }
 
-        public long ExtractIdFromToken(string token)
+        public ExtractIdFromTokenOutputDto ExtractIdFromToken(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var jwtToken = tokenHandler.ReadJwtToken(token);
+            
             var idClaim = jwtToken.Claims.First(c => c.Type.Equals(ClaimTypes.Sid)).Value;
             var id = long.Parse(idClaim);
-            return id;
+
+            var userTypeClaim = jwtToken.Claims.First(c => c.Type.Equals(ClaimTypes.GroupSid)).Value;
+
+            var output = new ExtractIdFromTokenOutputDto();
+
+            if (userTypeClaim == TokenUserTypeEnum.User.ToString())
+            {
+                output.UserId = id;
+            }
+            else if (userTypeClaim == TokenUserTypeEnum.Attendant.ToString())
+            {
+                output.AttendantId = id;
+            }
+
+            return output;
         }
         
         public async Task<bool> IsRefreshTokenRegistered(RefreshTokenDto input)
@@ -106,6 +121,11 @@ namespace Application.UseCase.Authentication
             await _refreshTokenRepository.RemoveRegisteredUserRefreshTokens(userId);
         }
 
+        public async Task RemoveRegisteredAttendantRefreshTokens(long attendantId)
+        {
+            await _refreshTokenRepository.RemoveRegisteredAttendantRefreshTokens(attendantId);
+        }
+
         public async Task RegisterRefreshTokenSession(RefreshTokenDto input)
         {
             await _refreshTokenRepository.RegisterRefreshTokenSession(input);
@@ -126,7 +146,7 @@ namespace Application.UseCase.Authentication
             return encrypted.ToString();
         }
 
-        public string GenerateToken(long id)
+        public string GenerateToken(long id, TokenUserTypeEnum userType)
         {
             var secret = _secrets.Value.Authentication.TokenSecret;
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
@@ -138,7 +158,8 @@ namespace Application.UseCase.Authentication
                 Subject = new ClaimsIdentity(
                     new Claim[]
                     {
-                        new Claim(ClaimTypes.Sid, id.ToString())
+                        new Claim(ClaimTypes.Sid, id.ToString()),
+                        new Claim(ClaimTypes.GroupSid, userType.ToString())
                     }),
                 Expires = DateTime.UtcNow.AddMinutes(expirationInMinutes),
                 SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature)
