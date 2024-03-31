@@ -12,6 +12,7 @@ using Infrastructure.Repository;
 using MediatR;
 using Application.Authentication.Boundaries.RestoreUserData;
 using Application.Authentication.Boundaries.GenerateTokenForAttendant;
+using Application.Authentication.Boundaries.ExtractIdFromToken;
 
 namespace API.Setup
 {
@@ -23,6 +24,7 @@ namespace API.Setup
             services.AddScoped<INotificationHandler<DomainNotification>, DomainNotificationHandler>();
 
             services.AddTransient<IRequestHandler<AuthenticateCommand, AuthenticateOutput>, AuthenticateHandler>();
+            services.AddTransient<IRequestHandler<ExtractIdFromTokenCommand, ExtractIdFromTokenOutput>, ExtractIdFromTokenHandler>();
             services.AddTransient<IRequestHandler<GenerateTokenForAttendantCommand, GenerateTokenForAttendantOutput>, GenerateTokenForAttendantHandler>();
             services.AddTransient<IRequestHandler<ResetPasswordCommand, ResetPasswordOutput>, ResetPasswordHandler>();
             services.AddTransient<IRequestHandler<RestoreUserDataCommand, RestoreUserDataOutput>, RestoreUserDataHandler>();

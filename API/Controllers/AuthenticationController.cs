@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using Application.Authentication.Boundaries.RestoreUserData;
 using Application.Authentication.Boundaries.GenerateTokenForAttendant;
+using Application.Authentication.Boundaries.ExtractIdFromToken;
 
 namespace API.Controllers
 {
@@ -154,6 +155,31 @@ namespace API.Controllers
 
             var command = new RestoreUserDataCommand(input);
             var result = await _mediatorHandler.SendCommand<RestoreUserDataCommand, RestoreUserDataOutput>(command);
+
+            if (IsValidOperation())
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(GetMessages());
+            }
+        }
+
+        [HttpGet("[action]")]
+        [SwaggerOperation(Summary = "Extrair id do token", Description = "Extrai o id do token de autorização da requisição")]
+        [SwaggerResponse(200, Description = "Sucesso", Type = typeof(ExtractIdFromTokenOutput))]
+        [SwaggerResponse(400, Description = "Erros 400", Type = typeof(List<string>))]
+        [SwaggerResponse(500, Description = "Erros 500", Type = typeof(List<string>))]
+        public async Task<IActionResult> ExtractIdFromToken([FromHeader(Name = "Authorization")] string authorization)
+        {
+            var input = new ExtractIdFromTokenInput()
+            {
+                Authorization = authorization
+            };
+
+            var command = new ExtractIdFromTokenCommand(input);
+            var result = await _mediatorHandler.SendCommand<ExtractIdFromTokenCommand, ExtractIdFromTokenOutput>(command);
 
             if (IsValidOperation())
             {
